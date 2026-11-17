@@ -1,8 +1,8 @@
 {
  "site_name": "KeralaKuri",
- "site_url": "https://keralakuri.in",
- "base_path": "/",
- "custom_domain": "keralakuri.in",
+ "site_url": "https://buddha4527.github.io/keralakuri",
+ "base_path": "/keralakuri/",
+ "custom_domain": "",
  "official_list_url": "https://statelottery.kerala.gov.in/index.php/lottery-result-view",
  "official_site": "https://statelottery.kerala.gov.in",
  "adsense_client": "",
