@@ -1,0 +1,71 @@
+:root{--green:#0B6E4F;--green-d:#08553D;--gold:#F4B400;--gold-l:#FFF4CC;--ink:#14211B;--muted:#55605A;--cream:#FFF9EE;--paper:#fff;--line:#E8DFCC;--mint:#E3F1EA;
+--head:"Baloo Chettan 2",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--green)}a:hover{color:var(--green-d)}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px}
+.top{border-bottom:1px solid var(--line);background:var(--cream)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font:800 24px/1 var(--head)}
+.brand b{color:var(--green);font-weight:800}
+.top nav a{margin-left:14px;font-weight:600;font-size:14px;text-decoration:none}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0 6px}
+.week a{display:flex;flex-direction:column;align-items:center;padding:7px 0;border-radius:12px;background:var(--paper);border:1px solid var(--line);text-decoration:none;color:var(--ink);font-weight:700;font-size:13px}
+.week a span{font-size:11px;font-weight:500;color:var(--muted)}
+.week a.today{background:var(--green);border-color:var(--green);color:#fff}.week a.today span{color:#D7EDE3}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+h1{font-size:30px;font-weight:800}h2{font-size:22px;font-weight:700;margin:26px 0 10px}
+.meta{color:var(--muted);font-size:14px;margin:4px 0 14px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--green-d);background:var(--mint);padding:3px 10px;border-radius:99px}
+.pill:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.first{background:var(--gold);border-radius:20px;padding:18px;margin:12px 0}
+.first .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.label{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.amt{font:800 24px/1 var(--head)}
+.big{font:800 clamp(34px,11vw,48px)/1.05 var(--mono);letter-spacing:.08em;text-align:center;background:var(--cream);border-radius:12px;padding:14px 4px;margin:10px 0}
+.first .row button{font:inherit;font-weight:600;font-size:13px;background:none;border:0;padding:6px 0;color:var(--ink);text-decoration:underline;cursor:pointer}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card .label{font-size:12px;color:var(--muted)}
+.tk{font:800 21px/1.2 var(--mono);letter-spacing:.04em;margin:4px 0}
+.place{font-size:13px;color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:14px;border:0;background:var(--green);color:#fff;font:700 17px/1 system-ui,sans-serif;text-decoration:none;cursor:pointer;width:100%}
+.btn:hover{background:var(--green-d);color:#fff}
+.btn.ghost{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+details.tier{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin:8px 0}
+details.tier summary{display:flex;justify-content:space-between;align-items:center;min-height:50px;padding:0 16px;cursor:pointer;font-weight:600;list-style:none}
+details.tier summary::-webkit-details-marker{display:none}
+details.tier summary:after{content:"＋";color:var(--muted);margin-left:10px}
+details.tier[open] summary:after{content:"−"}
+.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;padding:4px 14px 16px}
+.nums span{font:700 16px/1 var(--mono);text-align:center;padding:9px 0;border-radius:8px;background:var(--cream)}
+.nums span.hit{background:var(--gold)}
+.hint{font-size:13px;color:var(--muted)}
+.check{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;margin:18px 0;scroll-margin-top:12px}
+.check label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.check input{width:100%;height:60px;border-radius:12px;border:2px solid var(--green);padding:0 14px;font:800 24px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--ink)}
+.check .row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.check .row button{min-height:48px}
+.out{margin-top:12px;border-radius:14px;padding:14px;display:none}
+.out.win{display:block;background:var(--gold)}.out.none{display:block;background:var(--cream)}.out.bad{display:block;background:#FFF1E6;color:#8A3A0C}
+.out strong{display:block;font:800 26px/1.15 var(--head)}
+.mine{list-style:none;padding:0;margin:10px 0 0}
+.mine li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);font:700 15px var(--mono)}
+.mine li small{font:600 13px system-ui,sans-serif}
+.mine li.won small{color:var(--green-d)}
+.mine button{font:inherit;font-size:12px;border:0;background:none;color:var(--muted);cursor:pointer;min-height:36px}
+.note{background:var(--mint);border-radius:16px;padding:14px 16px;font-size:14px;margin:18px 0}
+.countdown{background:var(--paper);border:1px dashed var(--green);border-radius:16px;padding:14px 16px;margin:12px 0;display:none}
+.countdown.on{display:block}
+.list{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.list a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid #F1EADB;text-decoration:none;color:var(--ink)}
+.list a:first-child{border-top:0}
+.list a b{display:block}.list a small{color:var(--muted)}
+.list .tkn{font:800 15px var(--mono);background:var(--gold-l);padding:4px 8px;border-radius:8px;white-space:nowrap}
+.prose{font-size:16px}.prose h2{margin-top:22px}
+footer{border-top:1px solid var(--line);margin-top:36px;padding:20px 0 34px;font-size:13px;color:var(--muted)}
+footer nav a{margin-right:14px}
+.ad{margin:18px 0;min-height:0}
+@media (min-width:720px){h1{font-size:36px}}

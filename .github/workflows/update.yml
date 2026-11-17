@@ -1,0 +1,91 @@
+name: Update results and publish
+
+on:
+  schedule:
+    # Times are UTC. 09:50–12:50 UTC = 3:20–6:20 PM in Kerala (IST).
+    - cron: "50 9 * * *"
+    - cron: "*/10 10-12 * * *"
+    # Morning catch-up (8:30 AM IST) in case yesterday's result came late.
+    - cron: "0 3 * * *"
+  push:
+    branches: [main]
+    paths: ["scripts/**", "assets/**", "config.json", "data/inbox/**", "data/draws/**", ".github/workflows/**"]
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: "How many recent official draws to look at (use 30 the first time)"
+        default: "3"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  issues: write
+
+concurrency:
+  group: update-results
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test the parser
+        run: python -m unittest discover -s tests
+
+      - name: Fetch and check new results
+        id: fetch
+        run: |
+          set +e
+          python scripts/fetch.py --max "${{ github.event.inputs.backfill || '3' }}"
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+          if [ -n "$(git status --porcelain data/draws data/inbox)" ]; then echo "new=1" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Save new results to the repository
+        if: steps.fetch.outputs.new == '1'
+        run: |
+          git config user.name "keralakuri-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/draws data/inbox
+          git commit -m "Add result(s) $(date -u +%F)"
+          git push
+
+      - name: Build website
+        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        run: python scripts/build.py
+
+      - uses: actions/configure-pages@v5
+        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        with:
+          path: _site
+
+      - id: deploy
+        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        uses: actions/deploy-pages@v4
+
+      - name: Open an issue if a result needs a human look
+        if: steps.fetch.outputs.code == '2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create needs-review --color D93F0B --force >/dev/null 2>&1 || true
+          if [ -z "$(gh issue list --label needs-review --state open --json number --jq '.[].number')" ]; then
+            gh issue create --label needs-review --title "Result needs review" \
+              --body "The automatic check stopped a result from being published.
+
+          $(python -c 'import json;print("\n".join("- "+p for p in json.load(open("data/status.json"))["problems"]))')
+
+          Nothing wrong was published. See the README section *When a result is held back* for what to do."
+          fi
