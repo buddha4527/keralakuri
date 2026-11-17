@@ -1,0 +1,18 @@
+name: Probe sources
+on:
+  push:
+    paths: [".github/workflows/probe.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for u in "https://result.keralalotteries.com/viewlotisresult.php?drawserial=75441" \
+                   "https://www.keralalotteries.com/" \
+                   "https://www.theweek.in/kerala-lottery-results.html" \
+                   "https://www.theweek.in/kerala-lottery-results/lucky-draw.html"; do
+            echo "== $u"; curl -sS -o /tmp/p -m 30 -w "%{http_code} %{size_download}\n" "$u" 2>&1 | tail -2
+          done
+          echo "== cert"; echo | timeout 20 openssl s_client -connect result.keralalotteries.com:443 -servername result.keralalotteries.com 2>/dev/null | openssl x509 -noout -dates -issuer 2>&1
+          curl -s -m 30 https://www.theweek.in/kerala-lottery-results/lucky-draw.html | grep -oE 'href="[^"]*kerala-lottery-result[^"]*"' | head -20
