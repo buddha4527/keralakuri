@@ -76,7 +76,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Open an issue if a result needs a human look
-        if: steps.fetch.outputs.code == '2'
+        if: always() && steps.fetch.outputs.code == '2'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
