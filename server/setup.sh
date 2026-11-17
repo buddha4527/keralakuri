@@ -3,7 +3,9 @@
 # Run in the server's browser terminal:  bash <(curl -s https://raw.githubusercontent.com/buddha4527/keralakuri/main/server/setup.sh)
 set -e
 echo "== KeralaKuri server setup =="
-read -rsp "Paste your GitHub token (it will not show) and press Enter: " TOKEN; echo
+export HOME="${HOME:-/root}"
+TOKEN="${KK_TOKEN:-}"
+if [ -z "$TOKEN" ]; then read -rsp "Paste your GitHub token (it will not show) and press Enter: " TOKEN; echo; fi
 sudo apt-get update -qq && sudo apt-get install -y -qq git python3 curl >/dev/null
 rm -rf ~/keralakuri
 git clone -q "https://x-access-token:${TOKEN}@github.com/buddha4527/keralakuri" ~/keralakuri
@@ -17,11 +19,13 @@ chmod +x server/run.sh
   echo "0 3 * * * $HOME/keralakuri/server/run.sh # keralakuri" ) | crontab -
 echo
 echo "== Testing the official website from this server =="
-if curl -s -o /dev/null -m 30 -w "%{http_code}\n" https://statelottery.kerala.gov.in/index.php/lottery-result-view; then
-  echo "Official results list: reachable"
-else
-  echo "Official results list: NOT reachable from this server"
-fi
+{
+  echo "checked: $(date -u '+%F %T') UTC from $(curl -s -m 10 https://ifconfig.co/country 2>/dev/null || echo unknown)"
+  echo "results list: $(curl -s -o /dev/null -m 30 -w '%{http_code}' https://statelottery.kerala.gov.in/index.php/lottery-result-view || echo FAILED)"
+  echo "result page:  $(curl -s -o /dev/null -m 30 -w '%{http_code}' 'https://result.keralalotteries.com/viewlotisresult.php?drawserial=75441' 2>&1 || echo FAILED)"
+  curl -sv -o /dev/null -m 30 'https://result.keralalotteries.com/viewlotisresult.php?drawserial=75441' 2>&1 | grep -iE 'expire|SSL certificate|verify' | head -5
+} | tee data/server-check.txt
+git add data/server-check.txt && git commit -qm "Server connection check" && git push -q origin main || true
 echo
 echo "== First run (loads recent results) =="
 python3 scripts/fetch.py --max 30 || true
