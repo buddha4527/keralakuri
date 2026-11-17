@@ -64,3 +64,10 @@ python3 -m http.server -d _site 8000    # then visit http://localhost:8000
   external scheduler (e.g. cron-job.org) can trigger the workflow through the GitHub API every 5 minutes.
 - When AdSense is approved, put your `ca-pub-…` ID in `config.json` → `adsense_client`. The site then adds the
   AdSense script and `ads.txt` automatically.
+
+## The India server (why and how)
+
+GitHub's computers are in the USA and could not reach the official Kerala lottery website (it timed out).
+So a small server in Mumbai does the collecting: `server/run.sh` runs every 5 minutes from 2:30 to 6:25 PM IST,
+and pushes any new, checked result to this repository. That push makes GitHub rebuild and publish the site.
+Setup is one command in the server's terminal (see `server/setup.sh`). Log on the server: `~/kk.log`.

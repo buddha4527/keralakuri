@@ -1,12 +1,6 @@
 name: Update results and publish
 
 on:
-  schedule:
-    # Times are UTC. 09:50–12:50 UTC = 3:20–6:20 PM in Kerala (IST).
-    - cron: "50 9 * * *"
-    - cron: "*/10 10-12 * * *"
-    # Morning catch-up (8:30 AM IST) in case yesterday's result came late.
-    - cron: "0 3 * * *"
   push:
     branches: [main]
     paths: ["scripts/**", "assets/**", "config.json", "data/inbox/**", "data/draws/**", ".github/workflows/**"]
@@ -46,7 +40,7 @@ jobs:
         id: fetch
         run: |
           set +e
-          python scripts/fetch.py --max "${{ github.event.inputs.backfill || '3' }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then python scripts/fetch.py --max "${{ github.event.inputs.backfill }}"; else python scripts/fetch.py --inbox; fi
           echo "code=$?" >> "$GITHUB_OUTPUT"
           if [ -n "$(git status --porcelain data/draws data/inbox)" ]; then echo "new=1" >> "$GITHUB_OUTPUT"; fi
 
@@ -60,19 +54,19 @@ jobs:
           git push
 
       - name: Build website
-        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        if: always() && steps.fetch.outcome == 'success'
         run: python scripts/build.py
 
       - uses: actions/configure-pages@v5
-        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        if: always() && steps.fetch.outcome == 'success'
 
       - uses: actions/upload-pages-artifact@v3
-        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        if: always() && steps.fetch.outcome == 'success'
         with:
           path: _site
 
       - id: deploy
-        if: steps.fetch.outputs.new == '1' || github.event_name != 'schedule'
+        if: always() && steps.fetch.outcome == 'success'
         uses: actions/deploy-pages@v4
 
       - name: Open an issue if a result needs a human look
