@@ -166,7 +166,8 @@ def share_link(draw, path):
 def draw_block(draw, path, heading, home=False):
     first = tier(draw, "1")
     f = first["tickets"][0]
-    parts = [f'<div style="margin-top:14px"><span class="pill">Official result</span></div>',
+    pill = "Result" if draw.get("source") else "Official result"
+    parts = [f'<div style="margin-top:14px"><span class="pill">{pill}</span></div>',
              f'<h1 style="margin-top:8px">{heading}</h1>',
              f'<p class="meta">{e(draw["name"])} {draw["code"]}-{draw["draw_no"]} · {nice_date(draw["date"])} · Draw at 3:00 PM</p>',
              f'<section class="first" aria-label="First prize"><div class="row"><span class="label">1st prize</span><span class="amt">{rupees(first["amount"])}</span></div>'
@@ -205,7 +206,7 @@ def draw_block(draw, path, heading, home=False):
             parts.append(f'<details class="tier"{" open" if t["tier"] == "4" else ""}><summary><span>{ordinal(t["tier"])} · {rupees(t["amount"])}</span>'
                          f'<span class="hint">{count}</span></summary><div class="nums">{nums}</div></details>')
     parts.append(f'<div class="note"><b>Before you claim:</b> check your ticket against the Kerala Government Gazette and surrender it within 30 days of the draw. '
-                 f'<a href="{url("how-to-claim/")}">How to claim</a> · <a href="{e(draw.get("source_url") or CFG["official_site"])}" rel="nofollow">Official result</a></div>')
+                 f'<a href="{url("how-to-claim/")}">How to claim</a> · <a href="{e(draw.get("source_url") or CFG["official_site"])}" rel="nofollow">{"Source" if draw.get("source") else "Official result"}</a></div>')
     data = {k: draw[k] for k in ("code", "draw_no", "name", "date", "tiers")}
     parts.append(f'<script type="application/json" id="kk-draw">{json.dumps(data, separators=(",", ":"))}</script>')
     return "\n".join(parts)
